@@ -39,10 +39,7 @@ def from_request():
     res = {}
     if current_app:
         with current_app.app_context():
-            keys = request.data.keys()
-            for key in keys:
-                res['key'] = request.data[key]
-    print('res= ', res)
+            res = request.view_args
     return res
 
 

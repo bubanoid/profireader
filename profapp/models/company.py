@@ -161,28 +161,24 @@ def simple_permissions(set_of_rights,
                        func_extracting_data_from_request
                        ):
     def business_rule(func_extracting_data_from_request):
-        data_form_request = func_extracting_data_from_request()
-        if 'company_id' in data_form_request.keys():
-            company_object = data_form_request['company_id']
-        elif 'company' in data_form_request.keys():
-            company_object = data_form_request['company']
-        else:
-            company_object = None
-        if 'user_id' in data_form_request.keys():
-            user_object = data_form_request['user_id']
-        elif 'user' in data_form_request.keys():
-            user_object = data_form_request['user']
-        else:
-            user_object = None
-
-        print(company_object)
         def user_company_permissions_rule(rights, **kwargs):
+            data_form_request = func_extracting_data_from_request()
+            if 'company_id' in data_form_request.keys():
+                company_object = data_form_request['company_id']
+            elif 'company' in data_form_request.keys():
+                company_object = data_form_request['company']
+            else:
+                company_object = None
+            if 'user_id' in data_form_request.keys():
+                user_object = data_form_request['user_id']
+            elif 'user' in data_form_request.keys():
+                user_object = data_form_request['user']
+            else:
+                user_object = None
+
+            print('company_object is', company_object)
             return UserCompany.permissions(rights, user_object,
                                            company_object)
-
-        # return UserCompany.permissions(user_object,
-        #                                company_object,
-        #                                set_of_rights)
 
         return user_company_permissions_rule
 
