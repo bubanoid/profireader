@@ -43,6 +43,7 @@ def apply_company():
     return redirect(url_for('portal.partners',
                             company_id=data['company_id']))
 
+
 @portal_bp.route('/partners/<string:company_id>/')
 @login_required
 def partners(company_id):

@@ -20,6 +20,7 @@ def ok(func):
 
     return function_json
 
+
 def replace_brackets(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -31,6 +32,18 @@ def replace_brackets(func):
         return func(*args, **kwargs)
 
     return wrapper
+
+
+def from_request():
+    from flask import current_app
+    res = {}
+    if current_app:
+        with current_app.app_context():
+            keys = request.data.keys()
+            for key in keys:
+                res['key'] = request.data[key]
+    print('res= ', res)
+    return res
 
 
 # make check for user groups!!!

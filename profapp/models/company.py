@@ -157,22 +157,26 @@ class Company(Base, PRBase):
         return self.to_dict(fields)
 
 
-def simple_permissions(set_of_rights):  # .p(right_name)
-    def business_rule(rights, **kwargs):
-        if 'company_id' in kwargs.keys():
-            company_object = kwargs['company_id']
-        elif 'company' in kwargs.keys():
-            company_object = kwargs['company']
+def simple_permissions(set_of_rights,
+                       func_extracting_data_from_request
+                       ):
+    def business_rule(func_extracting_data_from_request):
+        data_form_request = func_extracting_data_from_request()
+        if 'company_id' in data_form_request.keys():
+            company_object = data_form_request['company_id']
+        elif 'company' in data_form_request.keys():
+            company_object = data_form_request['company']
         else:
             company_object = None
-        if 'user_id' in kwargs.keys():
-            user_object = kwargs['user_id']
-        elif 'user' in kwargs.keys():
-            user_object = kwargs['user']
+        if 'user_id' in data_form_request.keys():
+            user_object = data_form_request['user_id']
+        elif 'user' in data_form_request.keys():
+            user_object = data_form_request['user']
         else:
             user_object = None
 
-        def user_company_permissions_rule(rights):
+        print(company_object)
+        def user_company_permissions_rule(rights, **kwargs):
             return UserCompany.permissions(rights, user_object,
                                            company_object)
 
@@ -182,7 +186,8 @@ def simple_permissions(set_of_rights):  # .p(right_name)
 
         return user_company_permissions_rule
 
-    return {set_of_rights: business_rule}
+    return {set_of_rights:
+            business_rule(func_extracting_data_from_request)}
 
 
 class UserCompany(Base, PRBase):
@@ -249,7 +254,7 @@ class UserCompany(Base, PRBase):
 
     ## corrected
     @staticmethod
-    @check_rights(simple_permissions(frozenset()))
+    #@check_rights(simple_permissions(frozenset()))
     def update_rights(user_id, company_id, new_rights):
         new_rights_binary = Right.transform_rights_into_integer(new_rights)
         user_company = db(UserCompany, user_id=user_id, company_id=company_id)
